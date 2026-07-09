@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-paper text-ink font-body antialiased;
+}
+
+h1, h2, h3 {
+  @apply font-display;
+}
+
+/* Service-ticket motif: perforated edge used on the diagnostic ticket card */
+.ticket-edge {
+  position: relative;
+}
+.ticket-edge::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 24px;
+  right: 24px;
+  height: 20px;
+  background-image: radial-gradient(circle, #F6F5F1 6px, transparent 6.5px);
+  background-size: 20px 20px;
+  background-repeat: repeat-x;
+  background-position: left center;
+}
+
+.input {
+  @apply w-full rounded-card border border-line bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink/30 focus:border-signal-teal focus:ring-1 focus:ring-signal-teal transition-colors;
+}
+
+.status-tag {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-mono font-medium tracking-wide;
+}
+
+:focus-visible {
+  outline: 2px solid #0E7C86;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

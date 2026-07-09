@@ -1,0 +1,13 @@
+{
+  "slug": "folsom",
+  "city": "Folsom",
+  "county": "Sacramento County",
+  "state": "CA",
+  "enabled": true,
+  "zipCodes": ["95630", "95631"],
+  "serviceRadiusMiles": 15,
+  "localIntro": "Serving homeowners across Folsom, from Historic District bungalows to newer Empire Ranch construction.",
+  "seoKeywords": ["Folsom HVAC repair", "Folsom AC repair", "Folsom heating repair"],
+  "featuredImage": "/cities/folsom.jpg",
+  "coordinates": { "lat": 38.6779, "lng": -121.1761 }
+}

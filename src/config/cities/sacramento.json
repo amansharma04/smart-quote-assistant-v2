@@ -1,0 +1,13 @@
+{
+  "slug": "sacramento",
+  "city": "Sacramento",
+  "county": "Sacramento County",
+  "state": "CA",
+  "enabled": true,
+  "zipCodes": ["95814", "95816", "95818", "95819", "95825"],
+  "serviceRadiusMiles": 20,
+  "localIntro": "Serving Sacramento homeowners from Midtown to the Pocket area.",
+  "seoKeywords": ["Sacramento HVAC repair", "Sacramento AC repair", "Sacramento heating repair"],
+  "featuredImage": "/cities/sacramento.jpg",
+  "coordinates": { "lat": 38.5816, "lng": -121.4944 }
+}

@@ -1,0 +1,136 @@
+{
+  "id": "hvac",
+  "displayName": "HVAC",
+  "slug": "hvac",
+  "referencePrefix": "HVAC",
+  "icon": "wind",
+  "enabled": true,
+  "theme": "blue",
+  "colors": {
+    "primary": "#0E7C86",
+    "primaryDark": "#0A5F67",
+    "secondary": "#C77B1F"
+  },
+  "hero": {
+    "headline": "Instant AC & Heating System Diagnostics",
+    "description": "Describe what your system is doing. We route your diagnostic intake to a licensed technician in your area.",
+    "cta": "Start Diagnostic Request"
+  },
+  "seo": {
+    "title": "AC & Heating Repair Quotes | {city}",
+    "description": "Get matched with a licensed HVAC technician in {city}. Describe your AC or heating issue and get a fast, no-obligation response.",
+    "ogImage": "/og/hvac.jpg"
+  },
+  "serviceCategories": [
+    { "id": "emergency-repair", "label": "Emergency Repair" },
+    { "id": "routine-maintenance", "label": "Routine Maintenance" },
+    { "id": "new-system-quote", "label": "New System Quote" },
+    { "id": "ac-not-cooling", "label": "AC Not Cooling" },
+    { "id": "heater-not-working", "label": "Heater Not Working" },
+    { "id": "strange-noise", "label": "Strange Noise" },
+    { "id": "thermostat-issue", "label": "Thermostat Issue" },
+    { "id": "other", "label": "Other" }
+  ],
+  "questions": [
+    {
+      "id": "issueType",
+      "type": "radio",
+      "label": "What's going on?",
+      "required": true,
+      "optionsFrom": "serviceCategories"
+    },
+    {
+      "id": "systemType",
+      "type": "dropdown",
+      "label": "System type",
+      "required": true,
+      "options": [
+        "Central Air (split system)",
+        "Heat Pump",
+        "Furnace",
+        "Ductless Mini-Split",
+        "Packaged Unit",
+        "Not sure"
+      ]
+    },
+    { "id": "brand", "type": "text", "label": "Brand (if known)", "required": false, "placeholder": "e.g. Carrier, Trane, Lennox" },
+    { "id": "approxAge", "type": "text", "label": "Approximate system age", "required": false, "placeholder": "e.g. 8 years, not sure" },
+    {
+      "id": "isRunning",
+      "type": "dropdown",
+      "label": "Is the system currently running?",
+      "required": false,
+      "options": ["Yes, running but not fixing the issue", "Running intermittently", "No, system is off / won't start"]
+    },
+    { "id": "symptoms", "type": "textarea", "label": "Symptoms", "required": true, "placeholder": "What is the system doing (or not doing)?" },
+    { "id": "startedWhen", "type": "text", "label": "When did the issue start?", "required": false, "placeholder": "e.g. yesterday, 3 days ago" },
+    { "id": "unusualNoiseSmell", "type": "text", "label": "Unusual noise or smell?", "required": false, "placeholder": "Describe if applicable" },
+    {
+      "id": "urgency",
+      "type": "radio",
+      "label": "Urgency",
+      "required": true,
+      "options": ["Emergency (today)", "Within 2-3 days", "This week", "Just researching"]
+    },
+    { "id": "zip", "type": "text", "label": "ZIP code", "required": true, "placeholder": "95814", "validate": "zip" },
+    { "id": "name", "type": "text", "label": "Full name", "required": true },
+    { "id": "phone", "type": "phone", "label": "Phone", "required": true, "placeholder": "(555) 555-5555" },
+    { "id": "email", "type": "email", "label": "Email (optional)", "required": false },
+    { "id": "preferredContactTime", "type": "text", "label": "Preferred contact time", "required": false, "placeholder": "e.g. weekday mornings" }
+  ],
+  "leadScoringRules": [
+    { "when": { "field": "urgency", "equals": "Emergency (today)" }, "addPoints": 40 },
+    { "when": { "field": "issueType", "equals": "New System Quote" }, "addPoints": 25 },
+    { "when": { "field": "isRunning", "equals": "No, system is off / won't start" }, "addPoints": 15 },
+    { "when": { "field": "email", "notEmpty": true }, "addPoints": 5 }
+  ],
+  "faqs": [
+    { "q": "Is this a repair company?", "a": "No. This site collects diagnostic details and routes your request to a licensed HVAC technician or company serving your area." },
+    { "q": "How fast will someone contact me?", "a": "Most requests are routed the same day. Emergency repair requests are prioritized." },
+    { "q": "Does it cost anything to submit a request?", "a": "No, submitting a diagnostic request is free. Any service pricing is provided directly by the technician." }
+  ],
+  "trustBadges": ["Licensed technicians only", "No obligation quotes", "Local to your area"],
+  "feedbackQuestions": [
+    { "id": "jobCompleted", "type": "boolean", "label": "Was the job completed?", "required": true },
+    { "id": "companyUsed", "type": "text", "label": "Which HVAC company completed the work?", "required": false },
+    { "id": "rating", "type": "rating", "label": "How would you rate the experience?", "required": true },
+    {
+      "id": "contactSpeed",
+      "type": "dropdown",
+      "label": "Did the company contact you quickly?",
+      "required": false,
+      "options": ["Same day", "Within 1-2 days", "Longer than 2 days", "Never contacted me"]
+    },
+    { "id": "comments", "type": "textarea", "label": "Any feedback?", "required": false },
+    { "id": "permissionToUseReview", "type": "boolean", "label": "You may use my feedback as a review (optional).", "required": false }
+  ],
+  "followUpTemplate": "Hi {name}, following up on your recent HVAC service request (Ref #{referenceNumber}). A few quick questions:\n1. Was the job completed?\n2. Which HVAC company completed the work?\n3. How would you rate the experience (1-5)?\n4. Did the company contact you quickly?\n5. Any other feedback?\nYou can also share feedback here: {feedbackLink}",
+  "emailTemplates": {
+    "leadNotification": {
+      "subject": "New HVAC lead — {referenceNumber}",
+      "heading": "New HVAC diagnostic request"
+    },
+    "customerConfirmation": {
+      "subject": "We received your HVAC request — {referenceNumber}",
+      "heading": "Request received"
+    },
+    "feedbackRequest": {
+      "subject": "How did your HVAC service go?",
+      "heading": "Quick follow-up"
+    },
+    "partnerNotification": {
+      "subject": "New lead routed to you — {referenceNumber}",
+      "heading": "New lead assigned"
+    }
+  },
+  "businessOnboardingFields": [
+    { "id": "companyName", "label": "Company name", "type": "text", "required": true },
+    { "id": "ownerName", "label": "Owner / manager name", "type": "text", "required": false },
+    { "id": "phone", "label": "Phone", "type": "phone", "required": true },
+    { "id": "email", "label": "Email", "type": "email", "required": true },
+    { "id": "website", "label": "Website", "type": "text", "required": false },
+    { "id": "serviceArea", "label": "Service area", "type": "text", "required": true },
+    { "id": "emergencyService", "label": "Offers emergency service", "type": "boolean", "required": false },
+    { "id": "leadPrice", "label": "Lead price", "type": "text", "required": false }
+  ]
+}
