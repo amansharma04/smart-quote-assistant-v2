@@ -35,6 +35,12 @@ h1, h2, h3 {
   @apply w-full rounded-card border border-line bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink/30 focus:border-signal-teal focus:ring-1 focus:ring-signal-teal transition-colors;
 }
 
+.brand-bg { background-color: var(--brand); }
+.brand-text { color: var(--brand); }
+.brand-border { border-color: var(--brand); }
+.brand-bg-soft { background-color: color-mix(in srgb, var(--brand) 12%, white); }
+.brand-accent { accent-color: var(--brand); }
+
 .status-tag {
   @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-mono font-medium tracking-wide;
 }

@@ -1,13 +1,26 @@
 import crypto from 'crypto'
 import { validateLeadPayload, scoreLead, fillTemplate } from '../../src/lib/validators.js'
-import { getIndustryConfig, getCityConfig } from '../lib/config.js'
-import { getLeadsSheet } from '../lib/sheets.js'
+import { resolveClientPage } from '../../src/lib/clientTemplate.js'
+import { getIndustryTemplate, getStaticClient } from '../lib/config.js'
+import { getClientsSheet, getLeadsSheet, rowToClient } from '../lib/sheets.js'
 import { sendEmail } from '../lib/email.js'
 import { generateId, generateReferenceNumber, jsonResponse, safeErrorResponse, methodNotAllowed } from '../lib/util.js'
 import { getClientIp, isRateLimited, isDuplicateSubmission } from '../lib/rateLimit.js'
 
+const VALID_SOURCES = ['website', 'instagram', 'facebook', 'google-business', 'qr', 'email', 'sms', 'direct']
+
 function escapeHtml(str = '') {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+async function loadClient(slug) {
+  const staticClient = getStaticClient(slug)
+  if (staticClient) return staticClient
+
+  const sheet = await getClientsSheet()
+  const rows = await sheet.getRows()
+  const row = rows.find((r) => r.get('slug') === slug)
+  return row ? rowToClient(row) : null
 }
 
 export async function handler(event) {
@@ -26,50 +39,60 @@ export async function handler(event) {
     return jsonResponse(400, { error: 'Invalid request.' })
   }
 
-  const industry = getIndustryConfig(input.industryId)
-  if (!industry || !industry.enabled) {
-    return jsonResponse(400, { error: 'This service category is not currently available.' })
+  let client
+  try {
+    client = await loadClient(input.clientSlug)
+  } catch (err) {
+    console.error('Failed to load client:', err.message)
+    return safeErrorResponse(502)
   }
 
-  const city = input.citySlug ? getCityConfig(input.citySlug) : null
-  if (input.citySlug && (!city || !city.enabled)) {
-    return jsonResponse(400, { error: 'This location is not currently available.' })
+  if (!client || !client.enabled) {
+    return jsonResponse(400, { error: 'This page is not currently available.' })
   }
+
+  const template = getIndustryTemplate(client.industryTemplateId)
+  if (!template) return safeErrorResponse(500)
+
+  const resolved = resolveClientPage(client, template)
 
   // Honeypot: if this hidden field has any value, silently pretend success.
   if (input.website) {
-    return jsonResponse(200, { referenceNumber: generateReferenceNumber(industry.referencePrefix) })
+    return jsonResponse(200, { referenceNumber: generateReferenceNumber(resolved.referencePrefix) })
   }
 
-  const { clean, isValid, errors } = validateLeadPayload(industry, input)
+  const { clean, isValid, errors } = validateLeadPayload(resolved, input)
   if (!isValid) {
     return jsonResponse(422, { error: 'Please correct the highlighted fields.', fieldErrors: errors })
   }
 
+  const source = VALID_SOURCES.includes(input.source) ? input.source : 'website'
+
   const fingerprint = crypto
     .createHash('sha256')
-    .update(`${ip}:${industry.id}:${clean.phone || ''}:${clean.zip || ''}`)
+    .update(`${ip}:${client.clientId}:${clean.phone || ''}:${clean.zip || ''}`)
     .digest('hex')
 
   if (isDuplicateSubmission(fingerprint)) {
-    return jsonResponse(429, { error: 'This request was already submitted. A professional will be in touch.' })
+    return jsonResponse(429, { error: 'This request was already submitted. We will be in touch.' })
   }
 
   const leadId = generateId()
-  const referenceNumber = generateReferenceNumber(industry.referencePrefix)
-  const score = scoreLead(industry, clean)
+  const referenceNumber = generateReferenceNumber(resolved.referencePrefix)
+  const score = scoreLead(resolved, clean)
   const createdAt = new Date().toISOString()
 
   try {
     const sheet = await getLeadsSheet()
     await sheet.addRow({
       leadId,
-      industryId: industry.id,
-      citySlug: input.citySlug || '',
+      clientId: client.clientId || '',
+      clientSlug: client.slug,
+      industryTemplateId: template.id,
       referenceNumber,
       createdAt,
       status: 'New',
-      assignedBusinessId: '',
+      source,
       internalNotes: '',
       score: String(score),
       answersJson: JSON.stringify(clean),
@@ -84,18 +107,18 @@ export async function handler(event) {
   }
 
   try {
-    const notifyTo = process.env.LEAD_NOTIFY_EMAIL
-    if (notifyTo) {
-      const tpl = industry.emailTemplates?.leadNotification
+    const recipients = [client.notificationEmail, client.secondaryNotifyEmail].filter(Boolean)
+    if (recipients.length) {
+      const tpl = resolved.emailTemplates?.leadNotification
       const answerRows = Object.entries(clean)
         .filter(([k]) => !['consent', 'website'].includes(k))
         .map(([k, v]) => `<p><strong>${escapeHtml(k)}:</strong> ${escapeHtml(Array.isArray(v) ? v.join(', ') : String(v ?? ''))}</p>`)
         .join('')
 
       await sendEmail({
-        to: notifyTo,
-        subject: fillTemplate(tpl?.subject || 'New lead — {referenceNumber}', { referenceNumber }),
-        html: `<h2>${escapeHtml(tpl?.heading || 'New lead')} — ${referenceNumber}</h2>${answerRows}`,
+        to: recipients.join(','),
+        subject: fillTemplate(tpl?.subject || 'New quote request — {referenceNumber}', { referenceNumber }),
+        html: `<h2>${escapeHtml(tpl?.heading || 'New quote request')} — ${referenceNumber}</h2><p><strong>Source:</strong> ${escapeHtml(source)}</p>${answerRows}`,
       })
     }
   } catch (err) {

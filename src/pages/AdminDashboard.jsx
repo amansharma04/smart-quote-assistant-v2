@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import AdminNav from '../components/AdminNav.jsx'
 import StatusBadge from '../components/StatusBadge.jsx'
 import { LEAD_STATUSES } from '../lib/validators.js'
-import { listIndustries } from '../config/industries/index.js'
 import { api } from '../lib/api.js'
 
 export default function AdminDashboard() {
@@ -11,21 +10,26 @@ export default function AdminDashboard() {
   const token = sessionStorage.getItem('admin_token')
 
   const [leads, setLeads] = useState([])
+  const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
-  const [industryFilter, setIndustryFilter] = useState('')
-
-  const industries = listIndustries()
+  const [clientFilter, setClientFilter] = useState('')
 
   useEffect(() => {
     if (!token) {
       navigate('/admin/login')
       return
     }
+    api.listClients(token).then((data) => setClients(data.clients || [])).catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (!token) return
     loadLeads()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, industryFilter])
+  }, [statusFilter, clientFilter])
 
   async function loadLeads() {
     setLoading(true)
@@ -33,7 +37,7 @@ export default function AdminDashboard() {
     try {
       const qs = new URLSearchParams()
       if (statusFilter) qs.set('status', statusFilter)
-      if (industryFilter) qs.set('industryId', industryFilter)
+      if (clientFilter) qs.set('clientId', clientFilter)
       const query = qs.toString() ? `?${qs.toString()}` : ''
       const data = await api.adminLeads(token, query)
       setLeads(data.leads || [])
@@ -64,8 +68,8 @@ export default function AdminDashboard() {
     }
   }
 
-  function industryLabel(id) {
-    return industries.find((i) => i.id === id)?.displayName || id
+  function clientLabel(slug) {
+    return clients.find((c) => c.slug === slug)?.businessName || slug || '—'
   }
 
   return (
@@ -81,13 +85,13 @@ export default function AdminDashboard() {
         </div>
 
         <div className="flex flex-wrap gap-2 mb-3">
-          <FilterChip label="All industries" active={industryFilter === ''} onClick={() => setIndustryFilter('')} />
-          {industries.map((i) => (
+          <FilterChip label="All clients" active={clientFilter === ''} onClick={() => setClientFilter('')} />
+          {clients.map((c) => (
             <FilterChip
-              key={i.id}
-              label={i.displayName}
-              active={industryFilter === i.id}
-              onClick={() => setIndustryFilter(i.id)}
+              key={c.clientId}
+              label={c.businessName}
+              active={clientFilter === c.clientId}
+              onClick={() => setClientFilter(c.clientId)}
             />
           ))}
         </div>
@@ -110,8 +114,8 @@ export default function AdminDashboard() {
               <thead className="bg-paper text-ink/50 text-xs uppercase tracking-wide">
                 <tr>
                   <th className="text-left px-4 py-3">Ref #</th>
-                  <th className="text-left px-4 py-3">Industry</th>
-                  <th className="text-left px-4 py-3">City</th>
+                  <th className="text-left px-4 py-3">Client</th>
+                  <th className="text-left px-4 py-3">Source</th>
                   <th className="text-left px-4 py-3">Score</th>
                   <th className="text-left px-4 py-3">Status</th>
                   <th className="text-left px-4 py-3">Received</th>
@@ -125,8 +129,8 @@ export default function AdminDashboard() {
                     className="border-t border-line hover:bg-paper cursor-pointer"
                   >
                     <td className="px-4 py-3 font-mono text-xs">{lead.referenceNumber}</td>
-                    <td className="px-4 py-3">{industryLabel(lead.industryId)}</td>
-                    <td className="px-4 py-3">{lead.citySlug || '—'}</td>
+                    <td className="px-4 py-3">{clientLabel(lead.clientSlug)}</td>
+                    <td className="px-4 py-3 font-mono text-xs">{lead.source}</td>
                     <td className="px-4 py-3 font-mono text-xs">{lead.score}</td>
                     <td className="px-4 py-3">
                       <StatusBadge status={lead.status} />

@@ -69,7 +69,7 @@ function QuestionField({ question, value, onChange, error, options, theme }) {
               key={opt.label}
               onClick={() => onChange(opt.v)}
               className={`px-4 py-2 ${theme.radius} border text-sm ${
-                value === opt.v ? 'border-signal-teal bg-signal-teal/10 text-signal-tealDark font-medium' : `${theme.border} text-ink/70`
+                value === opt.v ? `${theme.accentBorder} ${theme.accentBgSoft} ${theme.accentTextStrong} font-medium` : `${theme.border} text-ink/70`
               }`}
             >
               {opt.label}
@@ -105,8 +105,8 @@ function QuestionField({ question, value, onChange, error, options, theme }) {
               onClick={() => onChange(opt)}
               className={`text-sm ${theme.radius} border px-3 py-2.5 text-left transition-colors ${
                 value === opt
-                  ? `border-signal-teal bg-signal-teal/10 text-signal-tealDark font-medium`
-                  : `${theme.border} hover:border-signal-teal/50 text-ink/80`
+                  ? `${theme.accentBorder} ${theme.accentBgSoft} ${theme.accentTextStrong} font-medium`
+                  : `${theme.border} hover:opacity-70 text-ink/80`
               }`}
             >
               {opt}
@@ -133,12 +133,12 @@ function QuestionField({ question, value, onChange, error, options, theme }) {
               <label
                 key={opt}
                 className={`flex items-center gap-2 text-sm ${theme.radius} border px-3 py-2.5 cursor-pointer ${
-                  checked ? 'border-signal-teal bg-signal-teal/10' : theme.border
+                  checked ? `${theme.accentBorder} ${theme.accentBgSoft}` : theme.border
                 }`}
               >
                 <input
                   type="checkbox"
-                  className="accent-signal-teal"
+                  className={theme.accentAccent || 'accent-signal-teal'}
                   checked={checked}
                   onChange={() => onChange(checked ? arr.filter((v) => v !== opt) : [...arr, opt])}
                 />

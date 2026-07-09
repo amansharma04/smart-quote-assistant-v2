@@ -34,9 +34,6 @@ export async function handler(event) {
     if (!row) return jsonResponse(404, { error: 'Lead not found.' })
 
     if (input.status) row.set('status', input.status)
-    if (typeof input.assignedBusinessId === 'string') {
-      row.set('assignedBusinessId', sanitizeText(input.assignedBusinessId, 150))
-    }
     if (typeof input.internalNotes === 'string') {
       row.set('internalNotes', sanitizeText(input.internalNotes, 2000))
     }

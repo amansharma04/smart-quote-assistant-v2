@@ -9,31 +9,31 @@ export default function Privacy() {
         <h1 className="text-2xl font-bold mb-6">Privacy Policy</h1>
         <div className="space-y-4 text-sm text-ink/80 leading-relaxed">
           <p>
-            This page describes how information submitted through this diagnostic intake form is
+            This page describes how information submitted through a quote request form is
             collected, used, and shared.
           </p>
           <h2 className="font-semibold text-base mt-6">Information we collect</h2>
           <p>
-            When you submit a diagnostic intake request, we collect the details you provide about
-            the details of your request, your contact information, and your general location (city and ZIP
-            code). We do not collect payment information through this form.
+            When you submit a quote request, we collect the details you provide about your
+            request and your contact information. We do not collect payment information through
+            this form.
           </p>
-          <h2 className="font-semibold text-base mt-6">How we use your information</h2>
+          <h2 className="font-semibold text-base mt-6">How your information is used</h2>
           <p>
-            We use the information you submit to route your request to a qualified local business
-            or company serving your area, and to follow up with you about the status of your
-            request or to request feedback after a job is completed.
+            Your request is sent directly to the business whose page you submitted it on, so they
+            can follow up with you about your request. It may also be used to request feedback
+            after your service is completed.
           </p>
           <h2 className="font-semibold text-base mt-6">Sharing</h2>
           <p>
-            Your diagnostic details and contact information may be shared with one local business
-            selected to respond to your request. We do not sell your information to third parties.
+            Your request details and contact information are shared only with the business you
+            submitted the request to. We do not sell your information to third parties.
           </p>
           <h2 className="font-semibold text-base mt-6">Your choices</h2>
           <p>
-            You may request that we delete your information by contacting us using the details
-            provided in your confirmation. Providing consent to be contacted is required to submit
-            a request, but you may withdraw at any time.
+            You may request that your information be deleted by contacting the business directly,
+            or by contacting us using the details provided in your confirmation. Providing consent
+            to be contacted is required to submit a request, but you may withdraw at any time.
           </p>
           <h2 className="font-semibold text-base mt-6">Contact</h2>
           <p>Questions about this policy can be directed to the contact listed on this site.</p>

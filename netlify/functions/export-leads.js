@@ -23,12 +23,12 @@ export async function handler(event) {
 
     const columns = [
       'leadId',
-      'industryId',
-      'citySlug',
+      'clientSlug',
+      'industryTemplateId',
       'referenceNumber',
       'createdAt',
       'status',
-      'assignedBusinessId',
+      'source',
       'score',
       'internalNotes',
     ]

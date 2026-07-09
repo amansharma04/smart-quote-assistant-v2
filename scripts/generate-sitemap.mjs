@@ -15,22 +15,15 @@ function readJsonDir(dir) {
     .map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')))
 }
 
-const industries = readJsonDir(path.join(root, 'src/config/industries')).filter((i) => i.enabled)
-const cities = readJsonDir(path.join(root, 'src/config/cities')).filter((c) => c.enabled)
+// Real client pages are created and managed through /admin/clients and live
+// in Google Sheets, not in this codebase, so they can't be enumerated at
+// build time. Only the marketing pages and any static demo clients are
+// included here.
+const demoClients = readJsonDir(path.join(root, 'src/config/clients')).filter((c) => c.enabled)
 
-const staticPaths = ['/', '/privacy', '/terms']
-const combinedPaths = []
-for (const industry of industries) {
-  for (const city of cities) {
-    combinedPaths.push(`/${city.slug}-${industry.slug}`)
-  }
-}
+const staticPaths = ['/', '/privacy', '/terms', ...demoClients.map((c) => `/${c.slug}`)]
 
-const allPaths = [...staticPaths, ...combinedPaths]
-
-const urlEntries = allPaths
-  .map((p) => `  <url><loc>${SITE_URL}${p}</loc></url>`)
-  .join('\n')
+const urlEntries = staticPaths.map((p) => `  <url><loc>${SITE_URL}${p}</loc></url>`).join('\n')
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlEntries}\n</urlset>\n`
 
@@ -40,4 +33,4 @@ const robots = `User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${SITE_URL}/
 
 fs.writeFileSync(path.join(root, 'public/robots.txt'), robots)
 
-console.log(`Generated sitemap.xml with ${allPaths.length} URLs and robots.txt`)
+console.log(`Generated sitemap.xml with ${staticPaths.length} URLs and robots.txt`)

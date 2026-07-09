@@ -32,9 +32,10 @@ function authHeaders(token) {
 
 export const api = {
   // Public
-  siteConfig: () => request('site-config'),
+  getClient: (slug) => request(`get-client?slug=${encodeURIComponent(slug)}`),
   submitLead: (payload) => request('submit-lead', { method: 'POST', body: payload }),
-  feedbackContext: (leadId, token) => request(`feedback-context?leadId=${encodeURIComponent(leadId)}&token=${encodeURIComponent(token)}`),
+  feedbackContext: (leadId, token) =>
+    request(`feedback-context?leadId=${encodeURIComponent(leadId)}&token=${encodeURIComponent(token)}`),
   submitFeedback: (payload) => request('submit-feedback', { method: 'POST', body: payload }),
 
   // Admin auth
@@ -47,12 +48,7 @@ export const api = {
     request('create-feedback-token', { method: 'POST', headers: authHeaders(token), body: { leadId } }),
   exportLeads: (token) => request('export-leads', { headers: authHeaders(token) }),
 
-  // Admin businesses
-  listBusinesses: (token, query = '') => request(`admin-businesses${query}`, { headers: authHeaders(token) }),
-  saveBusiness: (token, payload) => request('admin-businesses', { method: 'POST', headers: authHeaders(token), body: payload }),
-
-  // Admin site settings
-  getSiteConfigAdmin: (token) => request('admin-site-config', { headers: authHeaders(token) }),
-  saveSiteConfig: (token, overrides) =>
-    request('admin-site-config', { method: 'POST', headers: authHeaders(token), body: { overrides } }),
+  // Admin clients
+  listClients: (token) => request('admin-clients', { headers: authHeaders(token) }),
+  saveClient: (token, payload) => request('admin-clients', { method: 'POST', headers: authHeaders(token), body: payload }),
 }

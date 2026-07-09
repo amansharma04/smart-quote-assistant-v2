@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { fillTemplate } from './validators.js'
 
 function setMeta(name, content, attr = 'name') {
   if (!content) return
@@ -41,13 +40,4 @@ export function useSeo({ title, description, ogImage, path }) {
       setCanonical(`${window.location.origin}${path}`)
     }
   }, [title, description, ogImage, path])
-}
-
-export function buildSeo(industry, city) {
-  const values = { city: city ? city.city : 'Your Area' }
-  return {
-    title: fillTemplate(industry.seo.title, values),
-    description: fillTemplate(industry.seo.description, values),
-    ogImage: industry.seo.ogImage,
-  }
 }

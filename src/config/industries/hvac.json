@@ -1,24 +1,15 @@
 {
   "id": "hvac",
   "displayName": "HVAC",
-  "slug": "hvac",
   "referencePrefix": "HVAC",
-  "icon": "wind",
-  "enabled": true,
-  "theme": "blue",
-  "colors": {
-    "primary": "#0E7C86",
-    "primaryDark": "#0A5F67",
-    "secondary": "#C77B1F"
-  },
-  "hero": {
-    "headline": "Instant AC & Heating System Diagnostics",
-    "description": "Describe what your system is doing. We route your diagnostic intake to a licensed technician in your area.",
-    "cta": "Start Diagnostic Request"
+  "clientPageDefaults": {
+    "headlineTemplate": "Request Service From {businessName}",
+    "subheadlineTemplate": "Tell us what's happening with your AC or heating system. {businessName} will review your request and contact you shortly.",
+    "submitButtonText": "Submit Service Request"
   },
   "seo": {
-    "title": "AC & Heating Repair Quotes | {city}",
-    "description": "Get matched with a licensed HVAC technician in {city}. Describe your AC or heating issue and get a fast, no-obligation response.",
+    "titleTemplate": "Request a Quote | {businessName}",
+    "descriptionTemplate": "Request AC or heating service from {businessName}. Tell us what's going on and get a fast response.",
     "ogImage": "/og/hvac.jpg"
   },
   "serviceCategories": [
@@ -85,52 +76,36 @@
     { "when": { "field": "email", "notEmpty": true }, "addPoints": 5 }
   ],
   "faqs": [
-    { "q": "Is this a repair company?", "a": "No. This site collects diagnostic details and routes your request to a licensed HVAC technician or company serving your area." },
-    { "q": "How fast will someone contact me?", "a": "Most requests are routed the same day. Emergency repair requests are prioritized." },
-    { "q": "Does it cost anything to submit a request?", "a": "No, submitting a diagnostic request is free. Any service pricing is provided directly by the technician." }
+    { "q": "How quickly will you respond?", "a": "Most requests are reviewed the same day. Emergency requests are prioritized." },
+    { "q": "Does it cost anything to submit a request?", "a": "No, submitting a request is free. Any service pricing is provided directly by our team." },
+    { "q": "What happens after I submit?", "a": "Your request goes straight to our team — we'll reach out using the contact info and time you provide." }
   ],
-  "trustBadges": ["Licensed technicians only", "No obligation quotes", "Local to your area"],
   "feedbackQuestions": [
     { "id": "jobCompleted", "type": "boolean", "label": "Was the job completed?", "required": true },
-    { "id": "companyUsed", "type": "text", "label": "Which HVAC company completed the work?", "required": false },
     { "id": "rating", "type": "rating", "label": "How would you rate the experience?", "required": true },
     {
       "id": "contactSpeed",
       "type": "dropdown",
-      "label": "Did the company contact you quickly?",
+      "label": "Did we contact you quickly?",
       "required": false,
       "options": ["Same day", "Within 1-2 days", "Longer than 2 days", "Never contacted me"]
     },
     { "id": "comments", "type": "textarea", "label": "Any feedback?", "required": false },
     { "id": "permissionToUseReview", "type": "boolean", "label": "You may use my feedback as a review (optional).", "required": false }
   ],
-  "followUpTemplate": "Hi {name}, following up on your recent HVAC service request (Ref #{referenceNumber}). A few quick questions:\n1. Was the job completed?\n2. Which HVAC company completed the work?\n3. How would you rate the experience (1-5)?\n4. Did the company contact you quickly?\n5. Any other feedback?\nYou can also share feedback here: {feedbackLink}",
+  "followUpTemplate": "Hi {name}, following up on your recent service request (Ref #{referenceNumber}). A few quick questions:\n1. Was the job completed?\n2. How would you rate the experience (1-5)?\n3. Did we contact you quickly?\n4. Any other feedback?\nYou can also share feedback here: {feedbackLink}",
   "emailTemplates": {
     "leadNotification": {
-      "subject": "New HVAC lead — {referenceNumber}",
-      "heading": "New HVAC diagnostic request"
+      "subject": "New quote request — {referenceNumber}",
+      "heading": "New quote request"
     },
     "customerConfirmation": {
-      "subject": "We received your HVAC request — {referenceNumber}",
+      "subject": "We received your request — {referenceNumber}",
       "heading": "Request received"
     },
     "feedbackRequest": {
-      "subject": "How did your HVAC service go?",
+      "subject": "How did your service go?",
       "heading": "Quick follow-up"
-    },
-    "partnerNotification": {
-      "subject": "New lead routed to you — {referenceNumber}",
-      "heading": "New lead assigned"
     }
-  },
-  "businessOnboardingFields": [
-    { "id": "companyName", "label": "Company name", "type": "text", "required": true },
-    { "id": "ownerName", "label": "Owner / manager name", "type": "text", "required": false },
-    { "id": "phone", "label": "Phone", "type": "phone", "required": true },
-    { "id": "email", "label": "Email", "type": "email", "required": true },
-    { "id": "website", "label": "Website", "type": "text", "required": false },
-    { "id": "serviceArea", "label": "Service area", "type": "text", "required": true },
-    { "id": "emergencyService", "label": "Offers emergency service", "type": "boolean", "required": false },
-    { "id": "leadPrice", "label": "Lead price", "type": "text", "required": false }
-  ]
+  }
 }

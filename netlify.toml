@@ -9,7 +9,7 @@
   # netlify/lib/config.js) rather than imported, so they must be explicitly
   # included in the function bundle. Adding a new industry/city JSON file
   # requires no change here — it's picked up automatically by the glob.
-  included_files = ["src/config/industries/*.json", "src/config/cities/*.json"]
+  included_files = ["src/config/industries/*.json", "src/config/clients/*.json"]
 
 # SPA fallback for client-side routing. Netlify Functions are served from
 # /.netlify/functions/* and are matched before this catch-all.

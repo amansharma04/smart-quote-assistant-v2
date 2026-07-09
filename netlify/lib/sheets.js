@@ -1,21 +1,42 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet'
 import { JWT } from 'google-auth-library'
 
+const CLIENTS_SHEET_TITLE = 'Clients'
 const LEADS_SHEET_TITLE = 'Leads'
-const BUSINESSES_SHEET_TITLE = 'Businesses'
-const SETTINGS_SHEET_TITLE = 'Settings'
 
-// Generic, industry-agnostic schema. Per-industry question answers live in
-// `answersJson` as a JSON blob keyed by question id — this is what lets a
-// new industry config work with zero changes to the storage layer.
+const CLIENTS_HEADER = [
+  'clientId',
+  'slug',
+  'businessName',
+  'logo',
+  'brandColor',
+  'industryTemplateId',
+  'servicesJson',
+  'extraQuestionsJson',
+  'notificationEmail',
+  'secondaryNotifyEmail',
+  'phone',
+  'website',
+  'serviceArea',
+  'headline',
+  'subheadline',
+  'submitButtonText',
+  'enabled',
+  'createdAt',
+]
+
+// Per-lead answers live in `answersJson` as a JSON blob keyed by question id
+// rather than fixed columns — that's what lets any industry template's
+// question set work with zero changes to the storage layer.
 const LEADS_HEADER = [
   'leadId',
-  'industryId',
-  'citySlug',
+  'clientId',
+  'clientSlug',
+  'industryTemplateId',
   'referenceNumber',
   'createdAt',
   'status',
-  'assignedBusinessId',
+  'source',
   'internalNotes',
   'score',
   'answersJson',
@@ -24,24 +45,6 @@ const LEADS_HEADER = [
   'feedbackJson',
   'submitterIp',
 ]
-
-const BUSINESSES_HEADER = [
-  'businessId',
-  'industryId',
-  'companyName',
-  'ownerName',
-  'phone',
-  'email',
-  'website',
-  'serviceArea',
-  'cities',
-  'status',
-  'pricing',
-  'notes',
-  'createdAt',
-]
-
-const SETTINGS_HEADER = ['key', 'valueJson', 'updatedAt']
 
 let cachedDoc = null
 
@@ -73,19 +76,14 @@ async function getOrCreateSheet(doc, title, header) {
   return sheet
 }
 
+export async function getClientsSheet() {
+  const doc = await getDoc()
+  return getOrCreateSheet(doc, CLIENTS_SHEET_TITLE, CLIENTS_HEADER)
+}
+
 export async function getLeadsSheet() {
   const doc = await getDoc()
   return getOrCreateSheet(doc, LEADS_SHEET_TITLE, LEADS_HEADER)
-}
-
-export async function getBusinessesSheet() {
-  const doc = await getDoc()
-  return getOrCreateSheet(doc, BUSINESSES_SHEET_TITLE, BUSINESSES_HEADER)
-}
-
-export async function getSettingsSheet() {
-  const doc = await getDoc()
-  return getOrCreateSheet(doc, SETTINGS_SHEET_TITLE, SETTINGS_HEADER)
 }
 
 function safeParse(json, fallback) {
@@ -96,38 +94,44 @@ function safeParse(json, fallback) {
   }
 }
 
+export function rowToClient(row) {
+  return {
+    clientId: row.get('clientId'),
+    slug: row.get('slug'),
+    businessName: row.get('businessName'),
+    logo: row.get('logo') || '',
+    brandColor: row.get('brandColor') || '#0E7C86',
+    industryTemplateId: row.get('industryTemplateId'),
+    services: safeParse(row.get('servicesJson'), []),
+    extraQuestions: safeParse(row.get('extraQuestionsJson'), []),
+    notificationEmail: row.get('notificationEmail') || '',
+    secondaryNotifyEmail: row.get('secondaryNotifyEmail') || '',
+    phone: row.get('phone') || '',
+    website: row.get('website') || '',
+    serviceArea: row.get('serviceArea') || '',
+    headline: row.get('headline') || '',
+    subheadline: row.get('subheadline') || '',
+    submitButtonText: row.get('submitButtonText') || '',
+    enabled: row.get('enabled') !== 'false',
+    createdAt: row.get('createdAt'),
+  }
+}
+
 export function rowToLead(row) {
   return {
     leadId: row.get('leadId'),
-    industryId: row.get('industryId'),
-    citySlug: row.get('citySlug'),
+    clientId: row.get('clientId'),
+    clientSlug: row.get('clientSlug'),
+    industryTemplateId: row.get('industryTemplateId'),
     referenceNumber: row.get('referenceNumber'),
     createdAt: row.get('createdAt'),
     status: row.get('status') || 'New',
-    assignedBusinessId: row.get('assignedBusinessId') || '',
+    source: row.get('source') || 'website',
     internalNotes: row.get('internalNotes') || '',
     score: Number(row.get('score')) || 0,
     answers: safeParse(row.get('answersJson'), {}),
     feedbackToken: row.get('feedbackToken') || '',
     feedbackTokenExpiresAt: row.get('feedbackTokenExpiresAt') || '',
     feedback: safeParse(row.get('feedbackJson'), null),
-  }
-}
-
-export function rowToBusiness(row) {
-  return {
-    businessId: row.get('businessId'),
-    industryId: row.get('industryId'),
-    companyName: row.get('companyName'),
-    ownerName: row.get('ownerName'),
-    phone: row.get('phone'),
-    email: row.get('email'),
-    website: row.get('website'),
-    serviceArea: row.get('serviceArea'),
-    cities: safeParse(row.get('cities'), []),
-    status: row.get('status') || 'Prospect',
-    pricing: row.get('pricing') || '',
-    notes: row.get('notes') || '',
-    createdAt: row.get('createdAt'),
   }
 }

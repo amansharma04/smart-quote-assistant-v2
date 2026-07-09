@@ -5,8 +5,7 @@ const ZIP_RE = /^\d{5}(-\d{4})?$/
 export const LEAD_STATUSES = [
   'New',
   'Contacted',
-  'Assigned',
-  'Sent to Business',
+  'Quoted',
   'Job Completed',
   'Feedback Requested',
   'Feedback Received',

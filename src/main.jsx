@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 
 import Home from './pages/Home.jsx'
-import LandingPage from './pages/LandingPage.jsx'
+import ClientPage from './pages/ClientPage.jsx'
 import ThankYou from './pages/ThankYou.jsx'
 import Feedback from './pages/Feedback.jsx'
 import Privacy from './pages/Privacy.jsx'
@@ -12,9 +12,9 @@ import Terms from './pages/Terms.jsx'
 import AdminLogin from './pages/AdminLogin.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 import AdminLeadDetail from './pages/admin/AdminLeadDetail.jsx'
-import AdminBusinesses from './pages/admin/AdminBusinesses.jsx'
+import AdminClients from './pages/admin/AdminClients.jsx'
+import AdminClientLinks from './pages/admin/AdminClientLinks.jsx'
 import AdminAnalytics from './pages/admin/AdminAnalytics.jsx'
-import AdminSettings from './pages/admin/AdminSettings.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -30,13 +30,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/leads/:leadId" element={<AdminLeadDetail />} />
-        <Route path="/admin/businesses" element={<AdminBusinesses />} />
+        <Route path="/admin/clients" element={<AdminClients />} />
+        <Route path="/admin/clients/:clientId/links" element={<AdminClientLinks />} />
         <Route path="/admin/analytics" element={<AdminAnalytics />} />
-        <Route path="/admin/settings" element={<AdminSettings />} />
 
-        {/* Landing page engine: one component renders every city+industry
-            page, e.g. /folsom-hvac, /sacramento-hvac */}
-        <Route path="/:combinedSlug" element={<LandingPage />} />
+        {/* One component renders every business client's dedicated quote
+            page, e.g. /calpro, /abc-heating, /demo-hvac */}
+        <Route path="/:clientSlug" element={<ClientPage />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminNav from '../../components/AdminNav.jsx'
-import { listIndustries } from '../../config/industries/index.js'
 import { api } from '../../lib/api.js'
 
 export default function AdminAnalytics() {
   const navigate = useNavigate()
   const token = sessionStorage.getItem('admin_token')
   const [leads, setLeads] = useState([])
+  const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -16,9 +16,11 @@ export default function AdminAnalytics() {
       navigate('/admin/login')
       return
     }
-    api
-      .adminLeads(token)
-      .then((data) => setLeads(data.leads || []))
+    Promise.all([api.adminLeads(token), api.listClients(token)])
+      .then(([leadsData, clientsData]) => {
+        setLeads(leadsData.leads || [])
+        setClients(clientsData.clients || [])
+      })
       .catch((err) => setError(err.message || 'Failed to load analytics.'))
       .finally(() => setLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -33,11 +35,13 @@ export default function AdminAnalytics() {
     )
   }
 
-  const industries = listIndustries()
-  const byIndustry = industries.map((i) => ({
-    label: i.displayName,
-    count: leads.filter((l) => l.industryId === i.id).length,
+  const byClient = clients.map((c) => ({
+    label: c.businessName,
+    count: leads.filter((l) => l.clientSlug === c.slug).length,
   }))
+
+  const bySource = {}
+  for (const l of leads) bySource[l.source] = (bySource[l.source] || 0) + 1
 
   const byStatus = {}
   for (const l of leads) byStatus[l.status] = (byStatus[l.status] || 0) + 1
@@ -65,15 +69,24 @@ export default function AdminAnalytics() {
 
         <div className="grid sm:grid-cols-2 gap-6">
           <div className="bg-white border border-line rounded-card shadow-card p-6">
-            <h2 className="font-semibold text-sm uppercase tracking-wide text-ink/60 mb-4">By Industry</h2>
+            <h2 className="font-semibold text-sm uppercase tracking-wide text-ink/60 mb-4">By Client</h2>
             <div className="space-y-2">
-              {byIndustry.map((row) => (
+              {byClient.map((row) => (
                 <BarRow key={row.label} label={row.label} count={row.count} max={leads.length || 1} />
               ))}
             </div>
           </div>
 
           <div className="bg-white border border-line rounded-card shadow-card p-6">
+            <h2 className="font-semibold text-sm uppercase tracking-wide text-ink/60 mb-4">By Source</h2>
+            <div className="space-y-2">
+              {Object.entries(bySource).map(([source, count]) => (
+                <BarRow key={source} label={source} count={count} max={leads.length || 1} />
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white border border-line rounded-card shadow-card p-6 sm:col-span-2">
             <h2 className="font-semibold text-sm uppercase tracking-wide text-ink/60 mb-4">By Status</h2>
             <div className="space-y-2">
               {Object.entries(byStatus).map(([status, count]) => (

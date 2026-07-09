@@ -13,7 +13,6 @@ export default function AdminLeadDetail() {
 
   const [lead, setLead] = useState(null)
   const [notes, setNotes] = useState('')
-  const [assignedBusinessId, setAssignedBusinessId] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [copyMsg, setCopyMsg] = useState('')
@@ -35,7 +34,6 @@ export default function AdminLeadDetail() {
       const data = await api.adminLeads(token, `?leadId=${encodeURIComponent(leadId)}`)
       setLead(data.lead)
       setNotes(data.lead?.internalNotes || '')
-      setAssignedBusinessId(data.lead?.assignedBusinessId || '')
       if (data.lead?.feedbackToken) {
         setFeedbackLink(`${window.location.origin}/feedback/${data.lead.leadId}/${data.lead.feedbackToken}`)
       }
@@ -75,17 +73,17 @@ export default function AdminLeadDetail() {
   if (loading) return <div className="p-8 text-ink/50 text-sm">Loading…</div>
   if (!lead) return <div className="p-8 text-signal-red text-sm">{error || 'Lead not found.'}</div>
 
-  const industry = getIndustry(lead.industryId)
-  const questionLabels = Object.fromEntries((industry?.questions || []).map((q) => [q.id, q.label]))
+  const template = getIndustry(lead.industryTemplateId)
+  const questionLabels = Object.fromEntries((template?.questions || []).map((q) => [q.id, q.label]))
 
   const answerLines = Object.entries(lead.answers)
     .filter(([k]) => !['consent', 'website'].includes(k))
     .map(([k, v]) => `${questionLabels[k] || k}: ${Array.isArray(v) ? v.join(', ') : v}`)
 
-  const leadSummary = `Ref #${lead.referenceNumber} (${industry?.displayName || lead.industryId})\n${answerLines.join('\n')}`
+  const leadSummary = `Ref #${lead.referenceNumber} (${lead.clientSlug})\nSource: ${lead.source}\n${answerLines.join('\n')}`
 
-  const followUpMessage = industry?.followUpTemplate
-    ? fillTemplate(industry.followUpTemplate, {
+  const followUpMessage = template?.followUpTemplate
+    ? fillTemplate(template.followUpTemplate, {
         name: lead.answers.name || 'there',
         referenceNumber: lead.referenceNumber,
         feedbackLink: feedbackLink || '[generate feedback link below]',
@@ -105,7 +103,9 @@ export default function AdminLeadDetail() {
           <div>
             <p className="font-mono text-xs text-ink/50 mb-1">Ref #{lead.referenceNumber}</p>
             <h1 className="text-2xl font-bold">{lead.answers.name || 'Unnamed lead'}</h1>
-            <p className="text-sm text-ink/50">{industry?.displayName} · {lead.citySlug || 'no city'} · Score {lead.score}</p>
+            <p className="text-sm text-ink/50">
+              {lead.clientSlug} · source: {lead.source} · Score {lead.score}
+            </p>
           </div>
           <StatusBadge status={lead.status} />
         </div>
@@ -131,7 +131,7 @@ export default function AdminLeadDetail() {
         </section>
 
         <section className="bg-white border border-line rounded-card shadow-card p-6 space-y-4">
-          <h2 className="font-semibold text-sm uppercase tracking-wide text-ink/60">Status &amp; Assignment</h2>
+          <h2 className="font-semibold text-sm uppercase tracking-wide text-ink/60">Status &amp; Notes</h2>
           <div>
             <label className="block text-sm font-medium text-ink/70 mb-1.5">Status</label>
             <select className="input" value={lead.status} onChange={(e) => saveUpdate({ status: e.target.value })}>
@@ -139,16 +139,6 @@ export default function AdminLeadDetail() {
                 <option key={s}>{s}</option>
               ))}
             </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-ink/70 mb-1.5">Assigned business ID</label>
-            <input
-              className="input"
-              value={assignedBusinessId}
-              onChange={(e) => setAssignedBusinessId(e.target.value)}
-              onBlur={() => saveUpdate({ assignedBusinessId })}
-              placeholder="See Businesses tab for IDs"
-            />
           </div>
           <div>
             <label className="block text-sm font-medium text-ink/70 mb-1.5">Internal notes</label>

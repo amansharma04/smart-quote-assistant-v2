@@ -1,11 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 
-// Reads the same JSON config files the frontend uses. Netlify includes these
-// non-imported files via `included_files` in netlify.toml, so adding a new
-// industry or city JSON file requires no code change on either side.
+// Reads the same JSON template/demo-client files the frontend uses. Netlify
+// includes these non-imported files via `included_files` in netlify.toml, so
+// adding a new industry template requires no code change on either side.
 const INDUSTRIES_DIR = path.join(process.cwd(), 'src', 'config', 'industries')
-const CITIES_DIR = path.join(process.cwd(), 'src', 'config', 'cities')
+const DEMO_CLIENTS_DIR = path.join(process.cwd(), 'src', 'config', 'clients')
 
 function readJsonDir(dir) {
   if (!fs.existsSync(dir)) return []
@@ -15,20 +15,17 @@ function readJsonDir(dir) {
     .map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')))
 }
 
-export function getIndustryConfig(slug) {
+export function getIndustryTemplate(id) {
   const all = readJsonDir(INDUSTRIES_DIR)
-  return all.find((i) => i.slug === slug) || null
+  return all.find((t) => t.id === id) || null
 }
 
-export function getCityConfig(slug) {
-  const all = readJsonDir(CITIES_DIR)
-  return all.find((c) => c.slug === slug) || null
-}
-
-export function listIndustryConfigs() {
+export function listIndustryTemplates() {
   return readJsonDir(INDUSTRIES_DIR)
 }
 
-export function listCityConfigs() {
-  return readJsonDir(CITIES_DIR)
+// Demo clients only — real paying clients live in the Clients sheet.
+export function getStaticClient(slug) {
+  const all = readJsonDir(DEMO_CLIENTS_DIR)
+  return all.find((c) => c.slug === slug) || null
 }

@@ -1,5 +1,5 @@
 import { validateFeedbackPayload } from '../../src/lib/validators.js'
-import { getIndustryConfig } from '../lib/config.js'
+import { getIndustryTemplate } from '../lib/config.js'
 import { getLeadsSheet } from '../lib/sheets.js'
 import { jsonResponse, safeErrorResponse, methodNotAllowed } from '../lib/util.js'
 import { getClientIp, isRateLimited } from '../lib/rateLimit.js'
@@ -36,10 +36,10 @@ export async function handler(event) {
       return jsonResponse(404, { error: 'This feedback link is invalid or has expired.' })
     }
 
-    const industry = getIndustryConfig(row.get('industryId'))
-    if (!industry) return safeErrorResponse(500)
+    const template = getIndustryTemplate(row.get('industryTemplateId'))
+    if (!template) return safeErrorResponse(500)
 
-    const { clean, isValid, errors } = validateFeedbackPayload(industry, input)
+    const { clean, isValid, errors } = validateFeedbackPayload(template, input)
     if (!isValid) {
       return jsonResponse(422, { error: 'Please correct the highlighted fields.', fieldErrors: errors })
     }

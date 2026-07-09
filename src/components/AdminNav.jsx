@@ -2,9 +2,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const LINKS = [
   { to: '/admin', label: 'Leads' },
-  { to: '/admin/businesses', label: 'Businesses' },
+  { to: '/admin/clients', label: 'Clients' },
   { to: '/admin/analytics', label: 'Analytics' },
-  { to: '/admin/settings', label: 'Settings' },
 ]
 
 export default function AdminNav() {

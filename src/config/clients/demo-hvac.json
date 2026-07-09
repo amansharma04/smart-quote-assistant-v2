@@ -1,0 +1,25 @@
+{
+  "slug": "demo-hvac",
+  "isDemo": true,
+  "enabled": true,
+  "businessName": "Premier Heating & Air",
+  "logo": "",
+  "brandColor": "#0E7C86",
+  "industryTemplateId": "hvac",
+  "services": [
+    "AC repair",
+    "Heating repair",
+    "System installation",
+    "Maintenance plans",
+    "Emergency service"
+  ],
+  "extraQuestions": [],
+  "notificationEmail": "demo@example.com",
+  "secondaryNotifyEmail": "",
+  "phone": "(555) 010-2020",
+  "website": "https://example.com",
+  "serviceArea": "Sacramento, CA and surrounding areas",
+  "headline": "Request Service From Premier Heating & Air",
+  "subheadline": "Tell us what is happening with your AC or heating system. Our team will review your request and contact you shortly.",
+  "submitButtonText": "Submit Service Request"
+}

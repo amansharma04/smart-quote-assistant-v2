@@ -24,8 +24,7 @@ export async function handler(event) {
     }
 
     if (params.status) leads = leads.filter((l) => l.status === params.status)
-    if (params.industryId) leads = leads.filter((l) => l.industryId === params.industryId)
-    if (params.citySlug) leads = leads.filter((l) => l.citySlug === params.citySlug)
+    if (params.clientId) leads = leads.filter((l) => l.clientId === params.clientId)
 
     leads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 

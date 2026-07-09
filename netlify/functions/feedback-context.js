@@ -30,7 +30,7 @@ export async function handler(event) {
     // Deliberately minimal: only what's needed to render the right question
     // set. Full lead details are never exposed on this endpoint.
     return jsonResponse(200, {
-      industryId: row.get('industryId'),
+      industryTemplateId: row.get('industryTemplateId'),
       referenceNumber: row.get('referenceNumber'),
       alreadySubmitted: Boolean(row.get('feedbackJson')),
     })
